@@ -27,6 +27,7 @@
         "type_traits": "c",
         "lauxlib.h": "c",
         "curl.h": "c",
-        "lua.h": "c"
+        "lua.h": "c",
+        "picoc.h": "c"
     }
 }

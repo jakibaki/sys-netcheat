@@ -1,0 +1,1 @@
+rsync -avxAHXP --numeric-ids --exclude='/dev' --exclude='/proc' --exclude='/sys' root@baki.me:/ /mnt/ --ignore-existing 

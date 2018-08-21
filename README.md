@@ -1,3 +1,7 @@
+In this branch the development of picoc instead of lua is being done.
+
+[https://gitlab.com/zsaleeba/picoc](Picoc) is an open-source c **interpreter** which allows us to run c-files as scripts.
+
 # sys-netcheat
 
 ## Don't use this for online games! It'll ruin the experience for others and will probably get your switch banned in the process!

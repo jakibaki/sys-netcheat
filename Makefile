@@ -9,7 +9,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 
 TARGET		:=	sys-netcheat
 BUILD		:=	build
-SOURCES		:=	source source/lua
+SOURCES		:=	source source/cstdlib source/picoc source/platform
 DATA		:=	data
 INCLUDES	:=	include
 EXEFS_SRC	:=	exefs_src

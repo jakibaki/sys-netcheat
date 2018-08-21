@@ -10,7 +10,7 @@
 #include "cheat.h"
 #include "args.h"
 #include "util.h"
-#include "luahelper.h"
+#include "picochelper.h"
 
 #define TITLE_ID 0x420000000000000F
 #define HEAP_SIZE 0x000540000
@@ -258,11 +258,11 @@ int argmain(int argc, char **argv)
         return 0;
     }
 
-    if (!strcmp(argv[0], "luarun"))
+    if (!strcmp(argv[0], "picorun"))
     {
         if (argc != 2)
             goto help;
-        if (luaRunPath(argv[1]))
+        if (picocRunPath(argv[1]))
         {
             printf("Something went wrong while trying to run the lua-script :/\r\n");
         }
@@ -278,13 +278,15 @@ help:
            "    afreeze address u8/u16/u32/u64 value | Freezes the memory at address to value\r\n"
            "    lfreeze                              | Lists all frozen values\r\n"
            "    dfreeze index                        | Unfreezes the memory at index\r\n"
-           "    luarun path/url                      | Runs lua script at path or url (http:// only)\r\n"
+           "    picorun path/url                     | Runs c-file with picoc at path or url (http:// only)\r\n"
            "    psearch u32/u64 address              | Searches for pointers to address (most useful pointers are in MemType_CodeMutable)");
     return 0;
 }
 
 int main()
 {
+    mkdir("/netcheat", 0700);
+
     int listenfd = setupServerSocket();
 
     char *linebuf = malloc(sizeof(char) * MAX_LINE_LENGTH);
@@ -293,8 +295,6 @@ int main()
     struct sockaddr_in client;
 
     mutexInit(&actionLock);
-
-    luaInit();
 
     Thread freezeThread;
     Result rc = threadCreate(&freezeThread, freezeLoop, NULL, 0x4000, 49, 3);
