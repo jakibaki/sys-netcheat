@@ -44,14 +44,6 @@ CURLcode dlUrlToFile(char *url, char *path)
 
 char *runPath;
 
-/*void luaHookFunc(lua_State *L, lua_Debug *ar)
-{
-    if (ar->event == LUA_HOOKLINE)
-        if (semaphoreTryWait(&done))
-            luaL_error(L, "Sucessfully terminated lua-script!");
-    svcSleepThread(1);
-}*/
-
 #define PICOC_STACK_SIZE (128 * 1024) /* space for the the stack */
 
 
@@ -80,20 +72,18 @@ int picocRunPath(char *path)
     mutexUnlock(&actionLock);
     if (!strncmp(path, "http://", 7))
     {
-        CURLcode res = dlUrlToFile(path, "/netcheat/dl.lua");
+        CURLcode res = dlUrlToFile(path, "/netcheat/dl.c");
         if (res != CURLE_OK)
         {
             printf("Failed to dl file :/\r\n");
             return 1;
         }
 
-        path = "/netcheat/dl.lua";
+        path = "/netcheat/dl.c";
     }
     runPath = path;
 
     semaphoreInit(&done, 0);
-
-    //    lua_sethook(L, &luaHookFunc, LUA_MASKLINE, 0);
 
     Thread picocThread;
     Result rc = threadCreate(&picocThread, picocRunner, runPath, 0x4000, 49, 3);

@@ -3,7 +3,6 @@
 #ifndef NO_DEBUGGER
 
 #include "interpreter.h"
-#include "picochelper.h"
 
 #define BREAKPOINT_HASH(p) ( ((unsigned long)(p)->FileName) ^ (((p)->Line << 16) | ((p)->CharacterPos << 16)) )
 
@@ -103,16 +102,15 @@ void DebugCheckStatement(struct ParseState *Parser)
     // netcheat todo: use this for checking if have to break
     // todo: check on console how expensive semaphoreTryWait is.
 
-    if(++inst % 100 == 0){
-        if(semaphoreTryWait(&done)) {
-            printf("Terminating the script!\n");
-            PlatformExit(Parser->pc, 1);
-        }
+    if(++inst % 10 == 0 && semaphoreTryWait(&done)) {
+        printf("Terminating the script!\n");
+        PlatformExit(Parser->pc, 1);
     }
-
+    
     if(inst % 10000 == 0){
         inst = 0;
         svcSleepThread(100000);
+        // Making sure that the other thread is executed too.
     }
 
     int DoBreak = FALSE;

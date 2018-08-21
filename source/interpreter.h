@@ -6,7 +6,7 @@
 #define INTERPRETER_H
 
 #include "platform.h"
-#include "cstdlib/netcheat.h"
+#include "picochelper.h"
 
 
 /* handy definitions */
