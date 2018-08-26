@@ -271,7 +271,7 @@ void freezeDel(int index)
 {
     if (numFreezes <= index)
     {
-        printf("That number doesn't exit!");
+        printf("That number doesn't exist!\n");
     }
     numFreezes--;
     for (int i = index; i < numFreezes; i++)
