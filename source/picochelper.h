@@ -1,6 +1,7 @@
 #pragma once
 #include <switch.h>
 
+extern char* line;
 extern int sock;
 extern int scriptSock;
 extern Semaphore done;

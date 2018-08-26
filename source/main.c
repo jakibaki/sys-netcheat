@@ -265,7 +265,7 @@ int argmain(int argc, char **argv)
             goto help;
         if (picocRunPath(argv[1]))
         {
-            printf("Something went wrong while trying to run the lua-script :/\r\n");
+            printf("Something went wrong while trying to run the script :/\r\n");
         }
         return 0;
     }

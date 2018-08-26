@@ -66,22 +66,27 @@ void NetcheatAccept(struct ParseState *Parser, struct Value *ReturnValue, struct
 // u64 rc = readMem(void* buffer, u64 address, u64 size)
 void NetcheatReadMem(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
+    mutexLock(&actionLock);
     attach();
     ReturnValue->Val->UnsignedLongInteger = svcReadDebugProcessMemory(Param[0]->Val->Pointer, debughandle, Param[1]->Val->UnsignedLongInteger, Param[2]->Val->UnsignedLongInteger);
     detach();
+    mutexUnlock(&actionLock);
 }
 
 // u64 rc = writeMem(void* buffer, u64 address, u64 size);
 void NetcheatWriteMem(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
+    mutexLock(&actionLock);
     attach();
     ReturnValue->Val->UnsignedLongInteger = svcWriteDebugProcessMemory(debughandle, Param[0]->Val->Pointer, Param[1]->Val->UnsignedLongInteger, Param[2]->Val->UnsignedLongInteger);
     detach();
+    mutexUnlock(&actionLock);
 }
 
 // MemRegion mr = findRegion(MemoryType memType, int index);
 void NetcheatFindRegion(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
+    mutexLock(&actionLock);
     attach();
     MemoryInfo meminf = getRegionOfType(Param[1]->Val->Integer, Param[0]->Val->UnsignedInteger);
     MemRegion memReg;
@@ -90,6 +95,30 @@ void NetcheatFindRegion(struct ParseState *Parser, struct Value *ReturnValue, st
     memReg.size = meminf.size;
     ReturnValue->Val->MemoryRegion = memReg;
     detach();
+    mutexUnlock(&actionLock);
+}
+
+void NetcheatRecvLine(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
+{
+    mutexLock(&actionLock);
+    while (strlen(line) == 0)
+    {
+        mutexUnlock(&actionLock);
+        svcSleepThread(200000000);
+        mutexLock(&actionLock);
+
+        if (semaphoreTryWait(&done))
+        {
+            semaphoreSignal(&done);
+            break;
+        }
+    }
+    mutexUnlock(&actionLock);
+    char* outline = Param[0]->Val->Pointer;
+    int maxLen = Param[1]->Val->Integer;
+    strncpy(outline, line, maxLen);
+    line[0] = 0;
+    ReturnValue->Val->Integer = strlen(outline);
 }
 
 const char NetcheatDefs[] = "\
@@ -132,6 +161,8 @@ struct pollfd {\
 	short	events;\
 	short	revents;\
 };\
+#define peek(target, address) (readMem(target, address, sizeof(*target)))\n\
+#define poke(target, address) (writeMem(target, address, sizeof(*target)))\
 ";
 
 struct LibraryFunction NetcheatFunctions[] =
@@ -145,6 +176,7 @@ struct LibraryFunction NetcheatFunctions[] =
         {NetcheatReadMem, "u64 readMem(void*, u64, u64);"},
         {NetcheatWriteMem, "u64 writeMem(void*, u64, u64);"},
         {NetcheatFindRegion, "MemRegion findRegion(MemoryType, int);"},
+        {NetcheatRecvLine, "int recvLine(char*, int);"},
         {NULL, NULL}};
 
 static int POLLINValue = POLLIN;         /* any readable data available */

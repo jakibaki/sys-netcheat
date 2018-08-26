@@ -52,5 +52,15 @@ u64 readMem(void* buffer, u64 address, u64 size);
 // Writes game-memory
 u64 writeMem(void* buffer, u64 address, u64 size);
 
+
+// Macros for easy reading+writing 
+// Look at example for usage
+#define peek(target, address) (readMem(target, address, sizeof(*target)))
+#define poke(target, address) (writeMem(target, address, sizeof(*target)))
+
+
 // Finds the in n_th region of type memType
 MemRegion findRegion(MemoryType memType, int n);
+
+// Reads a line from the cli and puts maxchars of it into the outstring
+int recvLine(char* outstring, int maxchars);
