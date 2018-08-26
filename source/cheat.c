@@ -5,10 +5,83 @@
 #include <math.h>
 #include "cheat.h"
 #include "util.h"
+#include "maputils.h"
+#include "atmosphere-pm.h"
 
 Handle debughandle = 0;
+Handle processHandle = 0;
 
 Mutex actionLock;
+
+u64 map_base = 0;
+
+void mapGameMemory()
+{
+    // Broken right now :/
+    if (processHandle != 0)
+    {
+        printf("Handle already exists unmapping not implemented yet, returning now\n");
+        return;
+        /*printf("Unmapping...\n");
+        svcUnmapProcessMemory(MAPPED_BASE, processHandle, 0x0, MAPPED_SIZE);
+        svcCloseHandle(processHandle);
+        processHandle = 0;
+        printf("Unmapped the previous process, mapping new one...\n");*/
+    }
+
+    u64 pids[300];
+    u32 numProc;
+    svcGetProcessList(&numProc, pids, 300);
+    u64 pid = pids[numProc - 1];
+
+    pmdmntAtmosphereGetProcessHandle(&processHandle, pid);
+
+
+    attach();
+    MemoryInfo meminfo;
+    meminfo.addr = 0;
+    meminfo.size = 0;
+
+    u64 fullSize = 0;
+
+    u64 lastaddr = 0;
+    do
+    {
+        lastaddr = meminfo.addr;
+        u32 pageinfo;
+        svcQueryDebugProcessMemory(&meminfo, &pageinfo, debughandle, meminfo.addr + meminfo.size);
+
+        if (meminfo.type != MemType_Unmapped)
+        {
+            //void *map_addr = virtmemReserveMap(meminfo.size);
+            
+            void *map_addr;
+            Result rc = LocateSpaceForMapDeprecated((u64*) &map_addr, meminfo.size);
+            printf("Location with the deprecated thing because I'm desperate\n");
+            if(rc != 0) {
+                printf("LocateSpaceForMap failed :/ %x\n", rc);
+            }
+
+            printf("Mapping %p to %p\n", (void *)meminfo.addr, (void *)map_addr);
+            if(map_addr == NULL)
+                return;
+            
+
+            rc = svcMapProcessMemory((void *)map_addr, processHandle, meminfo.addr, meminfo.size);
+            if (rc != 0)
+            {
+                printf("Error during process mapping! Rc: %x\n", rc);
+            }
+            else
+            {
+                printf("Success mapping!\n");
+                fullSize += meminfo.size;
+            }
+            printf("Type: %x Perm: %x Size: %lx      So far: %lx\n", meminfo.type, meminfo.perm, meminfo.size, fullSize);
+        }
+    } while (lastaddr < meminfo.addr + meminfo.size);
+    detach();
+}
 
 int attach()
 {
@@ -90,19 +163,18 @@ int searchSection(u64 valMin, u64 valMax, u32 valType, MemoryInfo meminfo, void 
     u64 valMaxReal = 0;
     memcpy(&valMaxReal, &valMax, valSize);
 
-
     u64 searchVal = 0;
     while (off < meminfo.size)
     {
         if (meminfo.size - off < bufSize)
             bufSize = meminfo.size - off;
-        if(R_FAILED(svcReadDebugProcessMemory(buffer, debughandle, meminfo.addr + off, bufSize)))
+        if (R_FAILED(svcReadDebugProcessMemory(buffer, debughandle, meminfo.addr + off, bufSize)))
             return 0;
 
         for (u64 i = 0; i < bufSize; i += valSize)
         {
             memcpy(&searchVal, buffer + i, valSize);
-            if(valMinReal <= searchVal && valMaxReal >= searchVal)
+            if (valMinReal <= searchVal && valMaxReal >= searchVal)
             {
                 if (searchSize < SEARCH_ARR_SIZE)
                     searchArr[searchSize++] = meminfo.addr + off + i;
@@ -159,7 +231,7 @@ int contSearch(u64 valMin, u64 valMax)
     {
         u64 newVal = peek(searchArr[i]);
         memcpy(&newValReal, &newVal, valSize);
-        if(valMin <= newValReal && valMax >= newValReal)
+        if (valMin <= newValReal && valMax >= newValReal)
         {
             searchArr[newSearchSize++] = searchArr[i];
         }

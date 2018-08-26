@@ -11,6 +11,7 @@
 #include "cheat.h"
 #include "util.h"
 
+
 Semaphore done;
 
 char *line;
@@ -63,6 +64,10 @@ void picocRunner(void *runPath)
     PicocCleanup(&pc);
 
     printf("Done!\n");
+    if(scriptSock != 0) {
+        close(scriptSock);
+        scriptSock = 0;
+    }
     semaphoreSignal(&done);
 }
 
@@ -86,7 +91,7 @@ int picocRunPath(char *path)
     semaphoreInit(&done, 0);
 
     Thread picocThread;
-    Result rc = threadCreate(&picocThread, picocRunner, runPath, 0x4000, 49, 3);
+    Result rc = threadCreate(&picocThread, picocRunner, runPath, 0x4000, 0x3F, 3);
     if (R_FAILED(rc))
         fatalLater(rc);
     threadStart(&picocThread);

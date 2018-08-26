@@ -8,14 +8,14 @@
 #include <switch.h>
 #include "util.h"
 
-int setupServerSocket()
+int setupServerSocket(int port)
 {
     int lissock;
     struct sockaddr_in server;
     lissock = socket(AF_INET, SOCK_STREAM, 0);
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons(5555);
+    server.sin_port = htons(port);
 
     while (bind(lissock, (struct sockaddr *)&server, sizeof(server)) < 0)
     {

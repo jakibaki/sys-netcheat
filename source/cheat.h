@@ -1,6 +1,8 @@
 #include <switch.h>
 #define SEARCH_CHUNK_SIZE 0x40000
 
+extern u64 map_base;
+
 extern Handle debughandle;
 enum
 {
@@ -41,6 +43,8 @@ extern int search;
 #define SEARCH_ARR_SIZE 200000
 extern u64 searchArr[SEARCH_ARR_SIZE];
 extern int searchSize;
+
+void mapGameMemory();
 
 int attach();
 void detach();

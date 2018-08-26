@@ -5,4 +5,4 @@ extern Mutex actionLock;
 extern int sock;
 
 void fatalLater(Result err);
-int setupServerSocket();
+int setupServerSocket(int port);

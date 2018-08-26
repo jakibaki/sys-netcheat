@@ -99,19 +99,14 @@ int inst;
 void DebugCheckStatement(struct ParseState *Parser)
 {
 
-    // netcheat todo: use this for checking if have to break
-    // todo: check on console how expensive semaphoreTryWait is.
+    // netcheat: This part makes sure that the script gets terminated when it's supposed to.
 
-    if(++inst % 10 == 0 && semaphoreTryWait(&done)) {
+    if(++inst == 10 && semaphoreTryWait(&done)) {
+        inst = 0;
         printf("Terminating the script!\n");
         PlatformExit(Parser->pc, 1);
     }
-    
-    if(inst % 10000 == 0){
-        inst = 0;
-        svcSleepThread(100000);
-        // Making sure that the other thread is executed too.
-    }
+
 
     int DoBreak = FALSE;
     int AddAt;

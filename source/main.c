@@ -11,6 +11,7 @@
 #include "args.h"
 #include "util.h"
 #include "picochelper.h"
+#include "atmosphere-pm.h"
 
 #define TITLE_ID 0x420000000000000F
 #define HEAP_SIZE 0x000540000
@@ -287,7 +288,7 @@ int main()
 {
     mkdir("/netcheat", 0700);
 
-    int listenfd = setupServerSocket();
+    int listenfd = setupServerSocket(5555);
 
     char *linebuf = malloc(sizeof(char) * MAX_LINE_LENGTH);
 
@@ -312,7 +313,7 @@ int main()
             // Accepting fails after sleep for some reason.
             svcSleepThread(1e+9L);
             close(listenfd);
-            listenfd = setupServerSocket();
+            listenfd = setupServerSocket(5555);
             continue;
         }
 
@@ -321,8 +322,9 @@ int main()
         fflush(stderr);
         dup2(sock, STDERR_FILENO);
 
-        printf("Welcome to netcheat!\r\n"
-               "This needs debugmode=1 set in your hekate-config!\r\n");
+
+        printf("Welcome to netcheat!\r\n");
+        //mapGameMemory();
 
         while (1)
         {

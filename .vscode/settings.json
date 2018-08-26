@@ -28,6 +28,9 @@
         "lauxlib.h": "c",
         "curl.h": "c",
         "lua.h": "c",
-        "picoc.h": "c"
+        "picoc.h": "c",
+        "poll.h": "c",
+        "interpreter.h": "c",
+        "picochelper.h": "c"
     }
 }

@@ -37,6 +37,13 @@ If you want to terminate an script early (for example because it's stuck in an i
 
 ---
 
+## Numbers
+
+TODO!  
+https://github.com/user-none/lua-nums
+
+---
+
 ## Types
 
 #### ValTypes
