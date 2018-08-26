@@ -8,13 +8,13 @@ char line[100];
 
 int main()
 {
-
     MemRegion reg = findRegion(MemType_CodeMutable, 1);
     
     u64 ptrAddr = reg.address + 8589240;
+    
     u64 ptrVal;
-
     peek(&ptrVal, ptrAddr);
+    
     u64 coinAddr = ptrVal + 5240856;
 
     printf("Enter the new value\n");
