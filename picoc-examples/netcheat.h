@@ -38,12 +38,12 @@ typedef struct {
     u64 size;
 } MemRegion;
 
-u32 sleepMS(int time);
 // Sleeps for time milliseconds 
+u32 sleepMS(int time);
 
-u64 svcGetSystemTick();
 // Gets the current system tick
 // ((double) tick)/19200000 == time in seconds
+u64 svcGetSystemTick();
 
 
 // Reads game-memory
