@@ -280,7 +280,7 @@ help:
            "    lfreeze                              | Lists all frozen values\r\n"
            "    dfreeze index                        | Unfreezes the memory at index\r\n"
            "    picorun path/url                     | Runs c-file with picoc at path or url (http:// only)\r\n"
-           "    psearch u32/u64 address              | Searches for pointers to address (most useful pointers are in MemType_CodeMutable)");
+           "    psearch u32/u64 address              | Searches for pointers to address (most useful pointers are in MemType_CodeMutable)\r\n");
     return 0;
 }
 
