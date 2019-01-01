@@ -30,6 +30,9 @@ kip1=modules/sys-netcheat.kip
 ...
 ```
 
+After that open your `atmosphere/BCT.ini` and change the `debugmode_user = 0` line to `debugmode_user = 1`.  
+If the file doesn't exist download the latest atmosphere release.zip and unpack the file from there.
+
 After installing simply boot your switch, start a game/homebrew and run
 
 ```
