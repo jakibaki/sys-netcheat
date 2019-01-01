@@ -27,6 +27,7 @@ It will look somewhat like this:
 [CFW]
 kip1=...
 kip1=modules/sys-netcheat.kip
+debugmode=1
 ...
 ```
 
