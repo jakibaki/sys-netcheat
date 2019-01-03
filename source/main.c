@@ -224,36 +224,57 @@ int argmain(int argc, char **argv)
 
     if (!strcmp(argv[0], "ssearch"))
     {
-        if (argc != 3)
+        if (argc != 3 || argc != 4)
             goto help;
 
-        u8 u8query = 0;
-        u16 u16query = 0;
-        u32 u32query = 0;
-        u64 u64query = 0;
+        u8 u8LowQuery = 0;
+        u16 u16LowQuery = 0;
+        u32 u32LowQuery = 0;
+        u64 u64LowQuery = 0;
+
+        u8 u8UppQuery = 0;
+        u16 u16UppQuery = 0;
+        u32 u32UppQuery = 0;
+        u64 u64UppQuery = 0;
 
         if (!strcmp(argv[1], "u8"))
         {
             search = VAL_U8;
-            u8query = strtoul(argv[2], NULL, 10);
+            u8LowQuery = strtoul(argv[2], NULL, 10);
         }
         else if (!strcmp(argv[1], "u16"))
         {
             search = VAL_U16;
-            u16query = strtoul(argv[2], NULL, 10);
+            u16LowQuery = strtoul(argv[2], NULL, 10);
         }
         else if (!strcmp(argv[1], "u32"))
         {
             search = VAL_U32;
-            u32query = strtoul(argv[2], NULL, 10);
+            u32LowQuery = strtoul(argv[2], NULL, 10);
         }
         else if (!strcmp(argv[1], "u64"))
         {
             search = VAL_U64;
-            u64query = strtoull(argv[2], NULL, 10);
+            u64LowQuery = strtoull(argv[2], NULL, 10);
         }
         else
             goto help;
+
+        if (argc == 4) {
+            if (search == VAL_U8)
+            {
+                u8UppQuery = strtoul(argv[3], NULL, 10);
+            } else if (search == VAL_U16)
+            {
+                u16UppQuery = strtoul(argv[3], NULL, 10);
+            } else if (search == VAL_U32)
+            {
+                u32UppQuery = strtoul(argv[3], NULL, 10);
+            } else if (search == VAL_U64)
+            {
+                u64UppQuery = strtoull(argv[3], NULL, 10);
+            }
+        }
 
         MemoryInfo meminfo;
         memset(&meminfo, 0, sizeof(MemoryInfo));
@@ -286,7 +307,12 @@ int argmain(int argc, char **argv)
                         u8 *u8buf = (u8 *)outbuf;
                         for (u64 i = 0; i < chunksize / sizeof(u8); i++)
                         {
-                            if (u8buf[i] == u8query && searchSize < SEARCH_ARR_SIZE)
+                            if (searchSize >= SEARCH_ARR_SIZE)
+                            {
+                                break;
+                            }
+
+                            if (u8buf[i] == u8LowQuery || (argc == 4 && (u8buf[i] >= u8LowQuery && u8buf[i] <= u8UppQuery)))
                             {
                                 printf("Got a hit at %lx!\r\n", curaddr + i * sizeof(u8));
                                 searchArr[searchSize++] = curaddr + i * sizeof(u8);
@@ -299,7 +325,12 @@ int argmain(int argc, char **argv)
                         u16 *u16buf = (u16 *)outbuf;
                         for (u64 i = 0; i < chunksize / sizeof(u16); i++)
                         {
-                            if (u16buf[i] == u16query && searchSize < SEARCH_ARR_SIZE)
+                            if (searchSize >= SEARCH_ARR_SIZE)
+                            {
+                                break;
+                            }
+
+                            if (u16buf[i] == u16LowQuery || (argc == 4 && (u16buf[i] >= u16LowQuery && u16buf[i] <= u16UppQuery)))
                             {
                                 printf("Got a hit at %lx!\r\n", curaddr + i * sizeof(u16));
                                 searchArr[searchSize++] = curaddr + i * sizeof(u16);
@@ -312,7 +343,12 @@ int argmain(int argc, char **argv)
                         u32 *u32buf = (u32 *)outbuf;
                         for (u64 i = 0; i < chunksize / sizeof(u32); i++)
                         {
-                            if (u32buf[i] == u32query && searchSize < SEARCH_ARR_SIZE)
+                            if (searchSize >= SEARCH_ARR_SIZE)
+                            {
+                                break;
+                            }
+
+                            if (u32buf[i] == u32LowQuery || (argc == 4 && (u32buf[i] >= u32LowQuery && u32buf[i] <= u32UppQuery)))
                             {
                                 printf("Got a hit at %lx!\r\n", curaddr + i * sizeof(u32));
                                 searchArr[searchSize++] = curaddr + i * sizeof(u32);
@@ -325,7 +361,12 @@ int argmain(int argc, char **argv)
                         u64 *u64buf = (u64 *)outbuf;
                         for (u64 i = 0; i < chunksize / sizeof(u64); i++)
                         {
-                            if (u64buf[i] == u64query && searchSize < SEARCH_ARR_SIZE)
+                            if (searchSize >= SEARCH_ARR_SIZE)
+                            {
+                                break;
+                            }
+
+                            if (u64buf[i] == u64LowQuery || (argc == 4 && (u64buf[i] >= u64LowQuery && u64buf[i] <= u64UppQuery)))
                             {
                                 printf("Got a hit at %lx!\r\n", curaddr + i * sizeof(u64));
                                 searchArr[searchSize++] = curaddr + i * sizeof(u32);
@@ -350,6 +391,7 @@ int argmain(int argc, char **argv)
     {
         if (argc != 2)
             goto help;
+
         if (search == VAL_NONE)
         {
             printf("You need to start a search first!");
