@@ -389,7 +389,7 @@ int argmain(int argc, char **argv)
 
     if (!strcmp(argv[0], "csearch"))
     {
-        if (argc != 2)
+        if (argc != 2 || argc != 3)
             goto help;
 
         if (search == VAL_NONE)
@@ -398,26 +398,51 @@ int argmain(int argc, char **argv)
             return 0;
         }
 
-        u8 u8NewVal = 0;
-        u16 u16NewVal = 0;
-        u32 u32NewVal = 0;
-        u64 u64NewVal = 0;
+        u8 u8NewLowVal = 0;
+        u16 u16NewLowVal = 0;
+        u32 u32NewLowVal = 0;
+        u64 u64NewLowVal = 0;
+
+        u8 u8NewUppVal = 0;
+        u16 u16NewUppVal = 0;
+        u32 u32NewUppVal = 0;
+        u64 u64NewUppVal = 0;
 
         if (search == VAL_U8)
         {
-            u8NewVal = strtoul(argv[1], NULL, 10);
+            u8NewLowVal = strtoul(argv[1], NULL, 10);
         }
         else if (search == VAL_U16)
         {
-            u16NewVal = strtoul(argv[1], NULL, 10);
+            u16NewLowVal = strtoul(argv[1], NULL, 10);
         }
         else if (search == VAL_U32)
         {
-            u32NewVal = strtoul(argv[1], NULL, 10);
+            u32NewLowVal = strtoul(argv[1], NULL, 10);
         }
         else if (search == VAL_U64)
         {
-            u64NewVal = strtoull(argv[1], NULL, 10);
+            u64NewLowVal = strtoull(argv[1], NULL, 10);
+        }
+
+        if (argc == 3)
+        {
+            if (search == VAL_U8)
+            {
+                u8NewUppVal = strtoul(argv[2], NULL, 10);
+            }
+            else if (search == VAL_U16)
+            {
+                u16NewUppVal = strtoul(argv[2], NULL, 10);
+            }
+            else if (search == VAL_U32)
+            {
+                u32NewUppVal = strtoul(argv[2], NULL, 10);
+            }
+            else if (search == VAL_U64)
+            {
+                u64NewUppVal = strtoull(argv[2], NULL, 10);
+            }
         }
 
         u64 newSearchSize = 0;
@@ -427,7 +452,7 @@ int argmain(int argc, char **argv)
             {
                 u8 val;
                 svcReadDebugProcessMemory(&val, debughandle, searchArr[i], sizeof(u8));
-                if (val == u8NewVal)
+                if (val == u8NewLowVal || (argc == 3 && (val >= u8NewLowVal && val <= u8NewUppVal)))
                 {
                     printf("Got a hit at %lx!\r\n", searchArr[i]);
                     searchArr[newSearchSize++] = searchArr[i];
@@ -437,7 +462,7 @@ int argmain(int argc, char **argv)
             {
                 u16 val;
                 svcReadDebugProcessMemory(&val, debughandle, searchArr[i], sizeof(u16));
-                if (val == u16NewVal)
+                if (val == u16NewLowVal || (argc == 3 && (val >= u16NewLowVal && val <= u16NewUppVal)))
                 {
                     printf("Got a hit at %lx!\r\n", searchArr[i]);
                     searchArr[newSearchSize++] = searchArr[i];
@@ -447,7 +472,7 @@ int argmain(int argc, char **argv)
             {
                 u32 val;
                 svcReadDebugProcessMemory(&val, debughandle, searchArr[i], sizeof(u32));
-                if (val == u32NewVal)
+                if (val == u32NewLowVal || (argc == 3 && (val >= u32NewLowVal && val <= u32NewUppVal)))
                 {
                     printf("Got a hit at %lx!\r\n", searchArr[i]);
                     searchArr[newSearchSize++] = searchArr[i];
@@ -457,7 +482,7 @@ int argmain(int argc, char **argv)
             {
                 u64 val;
                 svcReadDebugProcessMemory(&val, debughandle, searchArr[i], sizeof(u64));
-                if (val == u64NewVal)
+                if (val == u64NewLowVal || (argc == 3 && (val >= u64NewLowVal && val <= u64NewUppVal)))
                 {
                     printf("Got a hit at %lx!\r\n", searchArr[i]);
                     searchArr[newSearchSize++] = searchArr[i];
