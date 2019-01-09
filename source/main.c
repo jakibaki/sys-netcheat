@@ -224,7 +224,7 @@ int argmain(int argc, char **argv)
 
     if (!strcmp(argv[0], "ssearch"))
     {
-        if (argc != 3 || argc != 4)
+        if (argc != 3 && argc != 4)
             goto help;
 
         u8 u8LowQuery = 0;
@@ -389,7 +389,7 @@ int argmain(int argc, char **argv)
 
     if (!strcmp(argv[0], "csearch"))
     {
-        if (argc != 2 || argc != 3)
+        if (argc != 2 && argc != 3)
             goto help;
 
         if (search == VAL_NONE)
