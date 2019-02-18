@@ -439,6 +439,41 @@ int argmain(int argc, char **argv)
         return 0;
     }
 
+    if (!strcmp(argv[0], "peek"))
+    {
+        if (argc != 3)
+            goto help;
+        u64 addr = strtoull(argv[1], NULL, 16);
+
+        if (!strcmp(argv[2], "u8"))
+        {
+            u8 val;
+            svcReadDebugProcessMemory(&val, debughandle, addr, sizeof(u8));
+            printf("Value is %hu\r\n", val);
+        }
+        else if (!strcmp(argv[2], "u16"))
+        {
+            u16 val;
+            svcReadDebugProcessMemory(&val, debughandle, addr, sizeof(u16));
+            printf("Value is %hu\r\n", val);
+        }
+        else if (!strcmp(argv[2], "u32"))
+        {
+            u32 val;
+            svcReadDebugProcessMemory(&val, debughandle, addr, sizeof(u32));
+            printf("Value is %u\r\n", val);
+        }
+        else if (!strcmp(argv[2], "u64"))
+        {
+            u64 val;
+            svcReadDebugProcessMemory(&val, debughandle, addr, sizeof(u64));
+            printf("Value is %lu\r\n", val);
+        }
+        else
+            goto help;
+        return 0;
+    }
+
     if (!strcmp(argv[0], "lfreeze"))
     {
         freezeList();
@@ -492,6 +527,7 @@ help:
            "    ssearch u8/u16/u32/u64 value         | Starts a search with 'value' as the starting-value\r\n"
            "    csearch value                        | Searches the hits of the last search for the new value\r\n"
            "    poke address u8/u16/u32/u64 value    | Sets the memory at address to value\r\n"
+           "    peek address u8/u16/u32/u64          | Gets the value at the address\r\n"
            "    afreeze address u8/u16/u32/u64 value | Freezes the memory at address to value\r\n"
            "    lfreeze                              | Lists all frozen values\r\n"
            "    dfreeze index                        | Unfreezes the memory at index\r\n");
