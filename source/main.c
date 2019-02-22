@@ -434,8 +434,8 @@ int argmain(int argc, char **argv)
 
         u64 addr;
         if (argv[1][0] == '$') {
-            u32 index = strtoul(argv[1] + 1, NULL, 10);
-            if (index < searchSize) {
+            int index = strtol(argv[1] + 1, NULL, 10);
+            if (index > 0 && index < searchSize) {
                 addr = searchArr[index];
             } else {
                 goto help;
@@ -491,8 +491,8 @@ int argmain(int argc, char **argv)
         
         u64 addr;
         if (argv[1][0] == '$') {
-            u32 index = strtoul(argv[1] + 1, NULL, 10);
-            if (index < searchSize) {
+            int index = strtol(argv[1] + 1, NULL, 10);
+            if (index > 0 && index < searchSize) {
                 addr = searchArr[index];
             } else {
                 goto help;
