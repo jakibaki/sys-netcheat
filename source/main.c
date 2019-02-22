@@ -217,12 +217,12 @@ int argmain(int argc, char **argv)
     if (argc == 0)
         return 0;
 
-    if (!strcmp(argv[0], "help"))
+    if (!strcmp(argv[0], "help") || !strcmp(argv[0], "h"))
     {
         goto help;
     }
 
-    if (!strcmp(argv[0], "ssearch"))
+    if (!strcmp(argv[0], "ssearch") || !strcmp(argv[0], "s"))
     {
         if (argc != 3)
             goto help;
@@ -346,7 +346,7 @@ int argmain(int argc, char **argv)
         return 0;
     }
 
-    if (!strcmp(argv[0], "csearch"))
+    if (!strcmp(argv[0], "csearch") || !strcmp(argv[0], "c"))
     {
         if (argc != 2)
             goto help;
@@ -427,11 +427,22 @@ int argmain(int argc, char **argv)
         return 0;
     }
 
-    if (!strcmp(argv[0], "poke"))
+    if (!strcmp(argv[0], "poke") || !strcmp(argv[0], "p"))
     {
         if (argc != 4)
             goto help;
-        u64 addr = strtoull(argv[1], NULL, 16);
+
+        u64 addr;
+        if (argv[1][0] == '$') {
+            u32 index = strtoul(argv[1] + 1, NULL, 10);
+            if (index < searchSize) {
+                addr = searchArr[index];
+            } else {
+                goto help;
+            }
+        } else {
+            addr = strtoull(argv[1], NULL, 16);
+        }
 
         if (!strcmp(argv[2], "u8"))
         {
@@ -458,13 +469,13 @@ int argmain(int argc, char **argv)
         return 0;
     }
 
-    if (!strcmp(argv[0], "lfreeze"))
+    if (!strcmp(argv[0], "lfreeze") || !strcmp(argv[0], "lf"))
     {
         freezeList();
         return 0;
     }
 
-    if (!strcmp(argv[0], "dfreeze"))
+    if (!strcmp(argv[0], "dfreeze") || !strcmp(argv[0], "df"))
     {
         if (argc != 2)
             goto help;
@@ -473,11 +484,22 @@ int argmain(int argc, char **argv)
         return 0;
     }
 
-    if (!strcmp(argv[0], "afreeze"))
+    if (!strcmp(argv[0], "afreeze") || !strcmp(argv[0], "af"))
     {
         if (argc != 4)
             goto help;
-        u64 addr = strtoull(argv[1], NULL, 16);
+        
+        u64 addr;
+        if (argv[1][0] == '$') {
+            u32 index = strtoul(argv[1] + 1, NULL, 10);
+            if (index < searchSize) {
+                addr = searchArr[index];
+            } else {
+                goto help;
+            }
+        } else {
+            addr = strtoull(argv[1], NULL, 16);
+        }
 
         if (!strcmp(argv[2], "u8"))
         {
