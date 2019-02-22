@@ -267,7 +267,7 @@ int argmain(int argc, char **argv)
             lastaddr = meminfo.addr;
             u32 pageinfo;
             svcQueryDebugProcessMemory(&meminfo, &pageinfo, debughandle, meminfo.addr + meminfo.size);
-            if (meminfo.type == MemType_Heap)
+            if ((meminfo.perm & Perm_Rw) == Perm_Rw)
             {
                 u64 curaddr = meminfo.addr;
                 u64 chunksize = 0x40000;
