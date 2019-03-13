@@ -20,7 +20,8 @@ int scriptSock = 0;
 
 void NetcheatSleepMS(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->UnsignedInteger = svcSleepThread(1000000L * Param[0]->Val->Integer);
+    svcSleepThread(1000000L * Param[0]->Val->Integer);
+    ReturnValue->Val->UnsignedInteger = 0;
 }
 
 void NetcheatSvcGetSystemTick(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
