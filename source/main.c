@@ -309,7 +309,7 @@ int argmain(int argc, char **argv)
                             if (u64buf[i] == u64query && searchSize < SEARCH_ARR_SIZE)
                             {
                                 printf("Got a hit at %lx!\r\n", curaddr + i * sizeof(u64));
-                                searchArr[searchSize++] = curaddr + i * sizeof(u32);
+                                searchArr[searchSize++] = curaddr + i * sizeof(u64);
                             }
                         }
                     }
